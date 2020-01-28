@@ -90,4 +90,4 @@ set clipboard=unnamedplus "sets the default copy register to be +
 "
 " " vmap "+y :w /dev/host_clipboard"
 " " map "+p :r /dev/host_clipboard"
-"
+nnoremap <Space> i_<Esc>r
