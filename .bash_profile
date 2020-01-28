@@ -26,6 +26,7 @@ export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 alias gco_clean='~/shared_conf/git_helpers/co_clean.sh'
 alias gpush='git push origin HEAD'
+alias gpull='git pull --rebase'
 alias gcommit='~/shared_conf/git_helpers/commit.sh'
 alias notreleased='git log --left-right --cherry-pick --oneline dev...master | grep -v Merge | awk "{ print $3 }" | sort -u'
 alias what2push='git diff --stat --cached origin/master'
