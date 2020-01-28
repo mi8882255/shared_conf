@@ -1,0 +1,22 @@
+new-session
+set-window-option -g mouse on
+set -g history-limit 30000
+# set -g status off
+
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+
+set -g prefix C-m
+bind C-m  send-prefix
+
+#vmap "+y :!xclip -f -sel clip
+#map "+p :r!xclip -o -sel clip
+
+# set-window-option -g mode-keys vi
+# bind-key -T copy-mode-vi v send -X begin-selection
+# bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
+# bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "pbcopy"
+
