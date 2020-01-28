@@ -77,7 +77,7 @@ map <Leader>w <C-w>
 " let g:ctrlp_user_command = 'find %s -type f'
 " set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 call plug#begin('~/.vim/plugged')
-Plug 'kien/ctrlp.vim'
+" Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 " Plug 'pangloss/vim-javascript'
 Plug 'jiangmiao/auto-pairs'
@@ -87,12 +87,14 @@ Plug 'easymotion/vim-easymotion'
 " Plug 'ycm-core/YouCompleteMe'
 " Plug 'rking/ag.vim'
 " Plug 'ahayman/vim-nodejs-complete'
-Plug 'mileszs/ack.vim'
+" Plug 'mileszs/ack.vim'
 
 " https://freshman.tech/vim-javascript/https://freshman.tech/vim-javascript/
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'dense-analysis/ale'
 Plug 'sheerun/vim-polyglot'
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 "
@@ -103,3 +105,4 @@ set clipboard=unnamedplus "sets the default copy register to be +
 " " map "+p :r /dev/host_clipboard"
 nnoremap <Space> i_<Esc>r
 " imap <C-BS> <C-x><C-o>
+" set rtp+=/usr/local/opt/fzf
