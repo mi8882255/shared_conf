@@ -51,6 +51,10 @@ set wildmenu
 " Настройка отображения специальных символов
 set list listchars=tab:→\ ,trail:·
 
+" set swap directory
+set backupdir=$HOME/.vim/swapfiles//
+set directory=$HOME/.vim/swapfiles//
+
 syntax on
 
 
