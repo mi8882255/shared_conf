@@ -60,10 +60,6 @@ syntax on
 
 com! FormatJSON %!python -m json.tool
 
-" Навигация с учетом русских символов, учитывается командами следующее/предыдущее слово и т.п.
-set iskeyword=@,48-57,_,192-255
-" Удаление символов бэкспэйсом в Windows
-set backspace=indent,eol,start
 map <C-n> :NERDTreeToggle<CR>
 
 
@@ -106,3 +102,6 @@ set clipboard=unnamedplus "sets the default copy register to be +
 nnoremap <Space> i_<Esc>r
 " imap <C-BS> <C-x><C-o>
 " set rtp+=/usr/local/opt/fzf
+let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
+inoremap <C-l> <Esc>c$;<Esc>P`[a
+inoremap <C-s> <C-o>:w<CR>
