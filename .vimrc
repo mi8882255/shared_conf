@@ -49,7 +49,7 @@ set history=200
 " Дополнительная информация в строке состояния
 set wildmenu
 " Настройка отображения специальных символов
-set list listchars=tab:→\ ,trail:·
+"set list listchars=tab:→\ ,trail:·
 
 " set swap directory
 set backupdir=$HOME/.vim/swapfiles//
