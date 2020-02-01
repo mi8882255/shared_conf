@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export LC_ALL=C bash
+#LANG=en_US.UTF-8 bash
+export LANG='en_US'
 
 # Git branch in prompt.
 
