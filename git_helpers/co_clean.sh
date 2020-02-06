@@ -18,7 +18,7 @@ echo '--Fetch'
 git fetch --all
 
 echo '--clean'
-git clean -f -d
+git clean -f -f -d -x
 git reset --hard
 
 sleep 1
