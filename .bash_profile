@@ -31,9 +31,10 @@ alias gco_clean='~/shared_conf/git_helpers/co_clean.sh'
 alias gpush='git push origin HEAD'
 alias gpull='git pull --rebase'
 alias gcommit='~/shared_conf/git_helpers/commit.sh'
-alias notreleased='git log --left-right --cherry-pick --oneline dev...master | grep -v Merge | awk "{ print $3 }" | sort -u'
-alias what2push='git diff --stat --cached origin/master'
-alias uncommit='git reset --soft HEAD^'
+alias g_notreleased='git log --left-right --cherry-pick --oneline dev...master | grep -v Merge | awk "{ print $3 }" | sort -u'
+alias g_what2push='git diff --stat --cached origin/`git rev-parse --abbrev-ref HEAD`'
+alias g_uncommit='git reset --soft HEAD^'
+alias g_reset_orig='git fetch && git reset --hard origin/`git rev-parse --abbrev-ref HEAD`'
 
 function mosht() {
 	mosh $1 tmux a
