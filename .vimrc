@@ -157,4 +157,5 @@ xmap <leader>a  <Plug>(coc-codeaction-selected)
 nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 nnoremap <Leader>a :Ag<Space>
+nnoremap <Leader>p :CocCommand prettier.formatFile
 source ~/shared_conf/.vimrc_autopaste
