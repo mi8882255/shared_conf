@@ -18,6 +18,7 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 make symlinks for .vim .tmux.conf
 
 ```
+mkdir .vim/swapfiles
 ln -s ~/shared_conf/.vimrc ./
 ln -s ~/shared_conf/.tmux.conf ./
 ```
