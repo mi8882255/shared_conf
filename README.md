@@ -31,3 +31,8 @@ to ~/.bashrc or ~/.bash_profile
 ```
 echo '\n. ~/shared_conf/.bashrc' >> ~/.bashrc 
 ```
+
+Go to vim and do:
+```
+<Esc>:PlugInstall
+```
