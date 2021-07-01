@@ -1,16 +1,16 @@
 #!/bin/bash
 
-export LC_ALL=C bash
+#export LC_ALL=C bash
 #LANG=en_US.UTF-8 bash
-export LANG='en_US'
+#export LANG='en_US.UTF-8'
 
 # Git branch in prompt.
 
-# parse_git_branch() {
-#   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-# }
+ parse_git_branch() {
+   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+ }
 
-# export PS1="\u@\h \W\[\033[32m\]\$(parse_git_branch)\[\033[00m\] $ "
+ export PS1="\u@\h \W\[\033[32m\]\$(parse_git_branch)\[\033[00m\] $ "
 
 # fix history
 
@@ -40,4 +40,7 @@ function mosht() {
 	mosh $1 tmux a
 }
 
-
+function simple_server() {
+  echo "SimpleWebStarted on $1"
+  while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; } | nc -l $1; done
+}
