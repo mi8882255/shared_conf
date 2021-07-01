@@ -57,7 +57,6 @@ set directory=$HOME/.vim/swapfiles//
 
 syntax on
 
-
 com! FormatJSON %!python -m json.tool
 
 map <C-n> :NERDTreeToggle<CR>
@@ -89,7 +88,7 @@ Plug 'junegunn/fzf.vim'
 
 call plug#end()
 "
-set clipboard=unnamed "sets the default copy register to be *
+"set clipboard=unnamed "sets the default copy register to be *
 set clipboard=unnamedplus "sets the default copy register to be +
 "
 " " vmap "+y :w /dev/host_clipboard"
@@ -158,4 +157,5 @@ nmap <leader>a  <Plug>(coc-codeaction-selected)
 
 nnoremap <Leader>a :Ag<Space>
 nnoremap <Leader>p :CocCommand prettier.formatFile
+vnoremap <C-y> :'<,'>w !xclip -selection clipboard<Cr><Cr>
 source ~/shared_conf/.vimrc_autopaste
