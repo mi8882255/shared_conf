@@ -7,11 +7,6 @@ if [ $console_log_count -gt 0 ]; then
     STATUS="bad"
 fi
 
-if [[ ! "$1" =~ ^CEX-[0-9]+.*$ ]]; then
-    echo "WARNING: wrong commit message"
-    STATUS="bad"
-fi
-
 if [ "$STATUS" == "bad" ]; then
     read -p " Continue? " -n 1 -r
     echo ''
