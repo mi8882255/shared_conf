@@ -23,7 +23,12 @@ add_line() {  # add_line <строка> <файл>
   echo "added to $2: $1"
 }
 
-if [[ $OSTYPE == darwin* ]] && (( $+commands[brew] )); then
+if [[ $OSTYPE == darwin* ]]; then
+  if (( ! $+commands[brew] )); then
+    echo '!! Нужен Homebrew: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    echo '   После установки открой новый терминал и запусти install.sh ещё раз.'
+    exit 1
+  fi
   brew install tmux ripgrep fzf
 elif (( $+commands[apt-get] )); then
   # vim-gtk3: vim с поддержкой системного буфера; на сервере без X хватит обычного vim
