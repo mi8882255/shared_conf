@@ -25,6 +25,45 @@ bindkey '^[OB' history-beginning-search-forward
 
 export EDITOR=vim
 
+# --- команда, набранная не в той раскладке (ru/ua вместо en)
+# Срабатывает по Enter, только если первое слово содержит кириллицу, такой команды нет,
+# а после перевода раскладки команда существует. Тогда строка заменяется на исправленную
+# и НЕ выполняется: проверь её и нажми Enter ещё раз. Внешних зависимостей нет,
+# таблица ниже: буква -> латинская буква на той же клавише (раскладки ЙЦУКЕН PC).
+typeset -gA _layout_map=(
+  й q  ц w  у e  к r  е t  н y  г u  ш i  щ o  з p  х '['  ъ ']'  ї ']'
+  ф a  ы s  і s  в d  а f  п g  р h  о j  л k  д l  ж ';'  э "'"  є "'"
+  я z  ч x  с c  м v  и b  т n  ь m  б ','  ю '.'  ё '`'
+  Й Q  Ц W  У E  К R  Е T  Н Y  Г U  Ш I  Щ O  З P  Х '{'  Ъ '}'  Ї '}'
+  Ф A  Ы S  І S  В D  А F  П G  Р H  О J  Л K  Д L  Ж ':'  Э '"'  Є '"'
+  Я Z  Ч X  С C  М V  И B  Т N  Ь M  Б '<'  Ю '>'  Ё '~'
+  . /  , '?'  '"' @  № '#'  ';' '$'  : '^'  '?' '&'  / '|'
+)
+
+# печатает строку в латинице, если её первое слово набрано не в той раскладке
+_layout_suggest() {
+  local buf=$1 out= c
+  local -a words=(${(z)buf})
+  [[ $words[1] == *[а-яА-ЯёЁіІїЇєЄ]* ]] || return 1
+  whence -- "$words[1]" >/dev/null && return 1
+  for c in ${(s::)buf}; do out+=${_layout_map[$c]-$c}; done
+  words=(${(z)out})
+  whence -- "$words[1]" >/dev/null || return 1
+  print -r -- "$out"
+}
+
+_layout_accept_line() {
+  local fixed
+  if fixed=$(_layout_suggest "$BUFFER"); then
+    BUFFER=$fixed
+    CURSOR=$#BUFFER
+    zle -M 'раскладка исправлена: проверь и нажми Enter'
+    return
+  fi
+  zle .accept-line
+}
+zle -N accept-line _layout_accept_line
+
 # --- prompt: user@host dir (branch) $
 autoload -Uz vcs_info
 zstyle ':vcs_info:git:*' formats ' (%b)'

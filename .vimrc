@@ -95,7 +95,6 @@ map <Leader>f <Plug>(easymotion-prefix)
 map <Leader>w <C-w>
 
 nnoremap <Space> i_<Esc>r
-inoremap <C-l> <Esc>c$;<Esc>
 inoremap <C-s> <C-o>:w<CR>
 inoremap <C-Left> <Esc>o
 vnoremap <C-y> "+y

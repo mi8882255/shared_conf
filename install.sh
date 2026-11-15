@@ -44,6 +44,16 @@ link .vimrc     ~/.vimrc
 link .tmux.conf ~/.tmux.conf
 link .inputrc   ~/.inputrc
 
+# Karabiner: правила раскладок (включить один раз: Settings → Complex Modifications → Add rule)
+if [[ $OSTYPE == darwin* ]]; then
+  if [[ -d /Applications/Karabiner-Elements.app ]]; then
+    mkdir -p ~/.config/karabiner/assets/complex_modifications
+    link karabiner/layouts.json ~/.config/karabiner/assets/complex_modifications/shared_conf_layouts.json
+  else
+    echo "!! Karabiner-Elements не установлен (brew install --cask karabiner-elements), правила раскладок пропущены"
+  fi
+fi
+
 add_line "source $REPO/zsh/zshrc" ~/.zshrc
 # Apple Terminal ведёт отдельную историю для каждой вкладки, это мешает общей истории (SHARE_HISTORY)
 [[ $OSTYPE == darwin* ]] && add_line 'SHELL_SESSIONS_DISABLE=1' ~/.zshenv
