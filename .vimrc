@@ -1,4 +1,26 @@
+let g:mapleader = ','
+
+" --- vim-plug: ставится сам при первом запуске
+let s:plugvim = expand('~/.vim/autoload/plug.vim')
+if empty(glob(s:plugvim))
+  silent execute '!curl -fsLo ' . s:plugvim . ' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" --- swap/undo в ~/.vim, каталоги создаются сами
+for s:dir in ['swapfiles', 'undo']
+  if !isdirectory(expand('~/.vim/' . s:dir))
+    call mkdir(expand('~/.vim/' . s:dir), 'p')
+  endif
+endfor
+set backupdir=$HOME/.vim/swapfiles//
+set directory=$HOME/.vim/swapfiles//
+set undodir=$HOME/.vim/undo//
+set undofile
+
+set encoding=utf-8
 set ignorecase
+set smartcase
 set number
 set rnu
 set hidden
@@ -7,155 +29,119 @@ set hlsearch
 set incsearch
 set ruler
 set confirm
-set smartcase
-set termencoding=utf8
-set nocompatible
 set showcmd
-" Фолдинг по отсупам
+" Фолдинг по отступам
 set foldenable
 set foldlevel=100
 set foldmethod=indent
-" Выключаем звуковое оповещение о достижении конца буффера, невозможности действия и т.д.
+" Без звуковых оповещений
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
-" Поддержка мыши
+" Мышь
 set mouse=a
 set mousemodel=popup
-" Скрывать указатель мыши, когда печатаем
 set mousehide
-" Включить автоотступы
+" Отступы
 set autoindent
-" Не переносить строки
-set nowrap
-" Преобразование Таба в пробелы
-" set expandtab
-" Размер табуляции по умолчанию
+set smartindent
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
-" Формат строки состояния. Альтернативные варианты настройки `:h statusline`
+" set expandtab
+set nowrap
+set showmatch
+set backspace=indent,eol,start
+set history=200
+" Строка состояния
 set statusline=%f%h%m%r\ %4.6b\ \ %l,%c%V\ %P
 set laststatus=2
-" Включаем "умные" отступы, например, авто отступ после `{`
-set smartindent
-" Отображение парных символов
-set showmatch
-" Навигация с учетом русских символов, учитывается командами следующее/предыдущее слово и т.п.
-set iskeyword=@,48-57,_,192-255
-" Удаление символов бэкспэйсом в Windows
-set backspace=indent,eol,start
-" Увеличение размера истории
-set history=200
-" Дополнительная информация в строке состояния
-set wildmenu
-" Настройка отображения специальных символов
+" Для coc: быстрее CursorHold, колонка знаков всегда видна
+set updatetime=300
+set signcolumn=yes
 "set list listchars=tab:→\ ,trail:·
 
-" set swap directory
-set backupdir=$HOME/.vim/swapfiles//
-set directory=$HOME/.vim/swapfiles//
+" Системный буфер обмена (на macOS работает unnamed, на Linux unnamedplus)
+set clipboard^=unnamed,unnamedplus
 
 syntax on
+filetype plugin indent on
 
-com! FormatJSON %!python -m json.tool
+com! FormatJSON %!python3 -m json.tool
 
-map <C-n> :NERDTreeToggle<CR>
-
-
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
-
-let g:mapleader=','
-map <Leader>f <Plug>(easymotion-prefix)
-map <Leader>w <C-w>
-
-" let g:ctrlp_user_command = 'find %s -type f'
-" set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+" --- plugins
 call plug#begin('~/.vim/plugged')
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
-Plug 'rking/ag.vim'
-
-" https://freshman.tech/vim-javascript/https://freshman.tech/vim-javascript/
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'dense-analysis/ale'
-Plug 'sheerun/vim-polyglot'
-Plug '~/.fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 call plug#end()
-"
-"set clipboard=unnamed "sets the default copy register to be *
-set clipboard=unnamedplus "sets the default copy register to be +
-"
-" " vmap "+y :w /dev/host_clipboard"
-" " map "+p :r /dev/host_clipboard"
+
+" coc-расширения ставятся автоматически (нужен node)
+let g:coc_global_extensions = ['coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier']
+
+if executable('rg')
+  let $FZF_DEFAULT_COMMAND = "rg --files --hidden --glob '!.git'"
+endif
+
+" --- mappings
+map <C-n> :NERDTreeToggle<CR>
+nnoremap <C-p> :Files<CR>
+nnoremap <Leader>a :Rg<Space>
+map <Leader>f <Plug>(easymotion-prefix)
+map <Leader>w <C-w>
+
 nnoremap <Space> i_<Esc>r
-" imap <C-BS> <C-x><C-o>
-" set rtp+=/usr/local/opt/fzf
-let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -l -g ""'
 inoremap <C-l> <Esc>c$;<Esc>
-"inoremap <C-l> <Esc>c$;<Esc>P`[a
 inoremap <C-s> <C-o>:w<CR>
 inoremap <C-Left> <Esc>o
+vnoremap <C-y> "+y
 
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
+" --- coc (API coc#pum вместо pumvisible, актуальная версия coc)
 function! s:check_back_space() abort
-	let col = col('.') - 1
-	return !col || getline('.')[col - 1]  =~# '\s'
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1] =~# '\s'
 endfunction
 
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>"
 
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-	if (index(['vim','help'], &filetype) >= 0)
-		execute 'h '.expand('<cword>')
-	else
-		call CocAction('doHover')
-	endif
+function! s:show_documentation() abort
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
 endfunction
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
 nmap <leader>rn <Plug>(coc-rename)
-
 xmap <leader>q  <Plug>(coc-format-selected)
 nmap <leader>q  <Plug>(coc-format-selected)
-
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+nmap <leader>qf <Plug>(coc-fix-current)
+nmap <leader>ac <Plug>(coc-codeaction-cursor)
+xmap <leader>as <Plug>(coc-codeaction-selected)
+nnoremap <Leader>p :CocCommand prettier.formatFile<CR>
 
 xmap if <Plug>(coc-funcobj-i)
 xmap af <Plug>(coc-funcobj-a)
 omap if <Plug>(coc-funcobj-i)
 omap af <Plug>(coc-funcobj-a)
 
-nmap <leader>qf  <Plug>(coc-fix-current)
-nmap <leader>ac  <Plug>(coc-codeaction)
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-nnoremap <Leader>a :Ag<Space>
-nnoremap <Leader>p :CocCommand prettier.formatFile
-vnoremap <C-y> :'<,'>w !xclip -selection clipboard<Cr><Cr>
-source ~/shared_conf/.vimrc_autopaste
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}

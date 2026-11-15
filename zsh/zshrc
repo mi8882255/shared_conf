@@ -1,0 +1,117 @@
+# shared_conf: zsh config
+# Подключение из ~/.zshrc:   source ~/shared_conf/zsh/zshrc
+
+# --- history (аналог HISTCONTROL/HISTIGNORE/histappend/PROMPT_COMMAND из bash)
+HISTFILE=${HISTFILE:-$HOME/.zsh_history}
+HISTSIZE=500000
+SAVEHIST=500000
+HISTORY_IGNORE='(ls|ls *|ps|ps *|history|history *)'
+setopt EXTENDED_HISTORY      # время команды в истории
+setopt SHARE_HISTORY         # общая история между вкладками (было history -a/-c/-r)
+setopt HIST_IGNORE_DUPS      # было HISTCONTROL=ignoredups
+setopt HIST_IGNORE_SPACE     # команда с пробелом в начале не пишется в историю
+setopt HIST_REDUCE_BLANKS
+setopt INTERACTIVE_COMMENTS  # можно вставлять команды с # комментариями
+
+# emacs-клавиши как в bash (иначе при EDITOR=vim zsh включит vi-режим)
+bindkey -e
+# стрелки вверх/вниз ищут по истории команды, начинающиеся с уже набранного (как в ~/.inputrc)
+bindkey '^[[A' history-beginning-search-backward
+bindkey '^[[B' history-beginning-search-forward
+bindkey '^[OA' history-beginning-search-backward   # режим application keypad (tmux, некоторые терминалы)
+bindkey '^[OB' history-beginning-search-forward
+# Ctrl-S в vim (сохранение) вместо остановки терминала
+[[ -t 0 ]] && stty -ixon 2>/dev/null
+
+export EDITOR=vim
+
+# --- prompt: user@host dir (branch) $
+autoload -Uz vcs_info
+zstyle ':vcs_info:git:*' formats ' (%b)'
+zstyle ':vcs_info:git:*' actionformats ' (%b|%a)'
+precmd_functions+=(vcs_info)
+setopt PROMPT_SUBST
+PROMPT='%n@%m %1~%F{green}${vcs_info_msg_0_}%f %(?..%F{red}[%?]%f )$ '
+
+# --- completion: регистронезависимая
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
+# --- fzf: Ctrl-R поиск по истории, Ctrl-T файлы, Alt-C cd
+if (( $+commands[fzf] )); then
+  (( $+commands[rg] )) && export FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git'"
+  export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+  if fzf --zsh &>/dev/null; then          # fzf >= 0.48
+    source <(fzf --zsh)
+  else                                    # старый fzf из apt (Debian/Ubuntu)
+    for f in /usr/share/doc/fzf/examples/key-bindings.zsh /usr/share/fzf/key-bindings.zsh; do
+      [[ -r $f ]] && { source $f; break }
+    done
+  fi
+fi
+
+# --- tmux
+alias ta='tmux new -A -s main'   # подключиться к сессии main или создать её
+
+mosht() { mosh "$1" -- tmux new -A -s main }
+
+simple_server() {
+  local port=${1:-8080}
+  echo "SimpleWebStarted on $port"
+  while true; do printf 'HTTP/1.1 200 OK\r\n\r\n' | nc -l "$port"; done
+}
+
+# --- git
+alias gpush='git push -u origin HEAD'
+alias gpull='git pull --rebase --autostash'
+alias g_uncommit='git reset --soft HEAD~1'
+alias g_reset_orig='git fetch && git reset --hard @{u}'
+
+# что уйдёт при push: коммиты и изменённые файлы относительно upstream
+g_what2push() {
+  git log --oneline @{u}..HEAD && git diff --stat @{u}..HEAD
+}
+
+# коммиты, которые есть в одной ветке и нет в другой (по умолчанию dev vs master)
+g_notreleased() {
+  git log --left-right --cherry-pick --no-merges --oneline "${1:-dev}...${2:-master}"
+}
+
+_confirm() {
+  read -q "?${1:-Are you sure?} [y/N] "
+  local rc=$?
+  echo
+  (( rc == 0 )) || echo '-Cancelled-'
+  return rc
+}
+
+# жёстко переключиться на ветку и выровнять её по origin (удаляет ВСЕ локальные изменения,
+# включая игнорируемые файлы вроде node_modules/.env)
+gco_clean() {
+  local branch=${1:?usage: gco_clean <branch>}
+  local dirty=$(git status --short; git clean -ndx)
+  if [[ -n $dirty ]]; then
+    echo "These changes will be lost:"
+    echo "$dirty"
+    _confirm || return 1
+  fi
+  echo '--Fetch'  && git fetch --all --prune &&
+  echo '--Clean'  && git clean -ffdx && git reset --hard &&
+  echo "--Switch $branch" && git switch "$branch" &&
+  echo '--Reset'  && git reset --hard "origin/$branch"
+}
+
+# git commit -am с проверкой на console.log; сообщение можно без кавычек: gcommit fix bug
+gcommit() {
+  (( $# )) || { echo 'usage: gcommit <message>'; return 1 }
+  if git diff HEAD | grep -q '^+.*console\.log'; then
+    echo 'WARNING: console.log in changes'
+    _confirm 'Continue?' || return 1
+  fi
+  git commit -am "$*"
+}
+
+# сбросить все сабмодули к origin/HEAD
+gsub_clean() {
+  _confirm 'Reset and clean ALL submodules?' || return 1
+  git submodule foreach --recursive 'git fetch --all && git clean -fd && git reset --hard origin/HEAD'
+}

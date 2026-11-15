@@ -1,0 +1,3 @@
+# ~/.inputrc (bash/readline): стрелки ищут по истории по набранному префиксу
+"\e[A": history-search-backward
+"\e[B": history-search-forward
