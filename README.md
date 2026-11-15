@@ -25,7 +25,7 @@ git clone git@github.com:mi8882255/shared_conf.git ~/shared_conf
 | `.vimrc` | vim |
 | `.tmux.conf` | tmux |
 | `.inputrc` | ↑/↓ поиск по истории для bash (на серверах без zsh) |
-| `karabiner/layouts.json` | переключение раскладок на macOS |
+| `karabiner/layouts.json` | раскладки и Caps Lock на macOS |
 | `.bash_profile`, `git_helpers/` | старый bash-вариант для серверов без zsh |
 
 ## zsh
@@ -56,7 +56,7 @@ git clone git@github.com:mi8882255/shared_conf.git ~/shared_conf
 
 ## tmux
 
-Префикс стандартный: **Ctrl-b**.
+Префикс стандартный: **Ctrl-b**. На маках с Karabiner его даёт короткое нажатие **Caps Lock** (Caps, затем `h` — панель слева).
 
 | клавиши | что делает |
 |---|---|
@@ -97,15 +97,16 @@ git clone git@github.com:mi8882255/shared_conf.git ~/shared_conf
 - gitgutter — `+ ~ -` у изменённых строк;
 - coc + `coc-tsserver`, `coc-json`, `coc-eslint`, `coc-prettier` — ставятся сами.
 
-## Раскладки на macOS (Karabiner)
+## Раскладки и Caps Lock на macOS (Karabiner)
 
 | клавиша (нажатая отдельно) | macOS | в Windows App (RDP) |
 |---|---|---|
 | fn | EN | `Ctrl+Shift+1` |
 | правый ⌘ | RU | `Ctrl+Shift+2` |
 | правый ⌥ | UA | `Ctrl+Shift+3` |
+| Caps Lock | `Ctrl-b` (префикс tmux); зажатый с другой клавишей → Ctrl | то же |
 
-В сочетаниях с другими клавишами они работают как обычные fn, ⌘ и ⌥. Раскладка выбирается по языку, поэтому подходит любая английская, русская или украинская.
+В сочетаниях с другими клавишами fn, ⌘ и ⌥ работают как обычно. Раскладка выбирается по языку, поэтому подходит любая английская, русская или украинская.
 
 `install.sh` делает всё сам (пропустить: `NO_KARABINER=1 ./install.sh`):
 - ставит Karabiner-Elements через brew, если его нет (спросит пароль sudo);

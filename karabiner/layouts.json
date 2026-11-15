@@ -1,5 +1,5 @@
 {
-  "title": "shared_conf: переключение раскладок",
+  "title": "shared_conf: раскладки и Caps Lock",
   "rules": [
     {
       "description": "shared_conf: fn отдельно → EN (в Windows App: Ctrl+Shift+1)",
@@ -235,6 +235,35 @@
               "select_input_source": {
                 "language": "^uk$"
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "shared_conf: Caps Lock отдельно → Ctrl-b (префикс tmux), с другой клавишей → Ctrl",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_control"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "key_code": "b",
+              "modifiers": [
+                "left_control"
+              ]
             }
           ]
         }
