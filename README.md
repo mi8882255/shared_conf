@@ -107,11 +107,13 @@ git clone git@github.com:mi8882255/shared_conf.git ~/shared_conf
 
 В сочетаниях с другими клавишами они работают как обычные fn, ⌘ и ⌥. Раскладка выбирается по языку, поэтому подходит любая английская, русская или украинская.
 
-Один раз на каждом маке:
-1. `brew install --cask karabiner-elements`, затем `install.sh`.
-2. Karabiner → Settings → Complex Modifications → Add predefined rule → включить три правила `shared_conf: …`.
-3. Убрать старые simple modifications для этих клавиш, если они есть. Иначе они сработают раньше правил.
-4. System Settings → Keyboard → «Press 🌐 key to» → Do Nothing.
+`install.sh` делает всё сам (пропустить: `NO_KARABINER=1 ./install.sh`):
+- ставит Karabiner-Elements через brew, если его нет (спросит пароль sudo);
+- вписывает правила из `karabiner/layouts.json` в `~/.config/karabiner/karabiner.json` (логика в `karabiner/merge.jq`, перед изменением делается backup). Karabiner перечитывает файл сам;
+- удаляет старые simple modifications для fn, правого ⌘ и правого ⌥ (иначе они перехватят клавиши), остальные не трогает;
+- ставит «Press 🌐 key to» → Do Nothing.
+
+Руками, один раз на каждом маке: при первом запуске Karabiner разрешить драйвер и Input Monitoring в System Settings → Privacy & Security. Это macOS из консоли не позволяет.
 
 Один раз на каждой Windows-машине, куда заходишь по RDP: Параметры → Время и язык → Ввод → Дополнительные параметры клавиатуры → Сочетания клавиш для языков ввода. Назначь `Ctrl+Shift+1` для English, `Ctrl+Shift+2` для Русского, `Ctrl+Shift+3` для Українського.
 

@@ -44,14 +44,22 @@ link .vimrc     ~/.vimrc
 link .tmux.conf ~/.tmux.conf
 link .inputrc   ~/.inputrc
 
-# Karabiner: правила раскладок (включить один раз: Settings → Complex Modifications → Add rule)
-if [[ $OSTYPE == darwin* ]]; then
-  if [[ -d /Applications/Karabiner-Elements.app ]]; then
-    mkdir -p ~/.config/karabiner/assets/complex_modifications
-    link karabiner/layouts.json ~/.config/karabiner/assets/complex_modifications/shared_conf_layouts.json
+# Karabiner: раскладки на fn / правый ⌘ / правый ⌥ (пропустить: NO_KARABINER=1 ./install.sh)
+if [[ $OSTYPE == darwin* && -z ${NO_KARABINER:-} ]]; then
+  [[ -d /Applications/Karabiner-Elements.app ]] || brew install --cask karabiner-elements
+  kconf=~/.config/karabiner/karabiner.json
+  mkdir -p ${kconf:h}
+  [[ -s $kconf ]] || print '{"profiles":[{"name":"Default profile","selected":true}]}' > $kconf
+  tmp=$(mktemp)
+  jq --slurpfile r "$REPO/karabiner/layouts.json" -f "$REPO/karabiner/merge.jq" $kconf > $tmp
+  if cmp -s $tmp $kconf; then
+    rm $tmp
   else
-    echo "!! Karabiner-Elements не установлен (brew install --cask karabiner-elements), правила раскладок пропущены"
+    cp $kconf "$kconf.bak-$TS" && mv $tmp $kconf   # Karabiner перечитает файл сам
+    echo "karabiner: правила раскладок записаны (backup: $kconf.bak-$TS)"
   fi
+  # «Press 🌐 key to» → Do Nothing, fn обрабатывает Karabiner
+  defaults write com.apple.HIToolbox AppleFnUsageType -int 0
 fi
 
 add_line "source $REPO/zsh/zshrc" ~/.zshrc
