@@ -9,7 +9,7 @@ git clone git@github.com:mi8882255/shared_conf.git ~/shared_conf
 ~/shared_conf/install.sh
 ```
 
-Нужен zsh (на Linux сначала `sudo apt install zsh && chsh -s $(which zsh)`). Повторный запуск безопасен. Скрипт:
+Если zsh нет, скрипт поставит его через apt (основным шеллом его делает `chsh -s $(which zsh)`). Повторный запуск безопасен. Скрипт:
 - ставит `tmux ripgrep fzf` через brew (macOS) или apt (Debian/Ubuntu, плюс `xclip` и vim);
 - прописывает в этот репозиторий личные `user.name`/`user.email`, чтобы не закоммитить сюда с рабочего адреса;
 - делает симлинки `~/.vimrc`, `~/.tmux.conf`, `~/.inputrc` (существующие файлы переименовывает в `*.bak-<дата>`);

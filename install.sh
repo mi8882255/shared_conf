@@ -1,7 +1,23 @@
-#!/usr/bin/env zsh
+#!/bin/sh
 # Установка shared_conf. Повторный запуск безопасен.
 # Существующие файлы не затираются, а переименовываются в *.bak-<дата>.
+
+# Скрипт на zsh. Этот кусок на sh: если zsh нет — ставим (apt) и перезапускаемся в нём.
+if [ -z "${ZSH_VERSION:-}" ]; then
+  if ! command -v zsh >/dev/null 2>&1; then
+    if command -v apt-get >/dev/null 2>&1; then
+      if [ "$(id -u)" -eq 0 ]; then s=; else s=sudo; fi
+      $s apt-get update -q && $s apt-get install -y zsh || exit 1
+    else
+      echo '!! Нужен zsh: поставь его и запусти install.sh ещё раз.'
+      exit 1
+    fi
+  fi
+  exec zsh "$0" "$@"
+fi
+
 set -eu
+(( EUID == 0 )) && sudo() { "$@" }   # под root sudo не нужен (и на сервере его может не быть)
 
 REPO=${0:A:h}
 TS=$(date +%Y%m%d-%H%M%S)
