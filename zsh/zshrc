@@ -60,17 +60,20 @@ _layout_accept_line() {
     zle -M 'раскладка исправлена: проверь и нажми Enter'
     return
   fi
+  zle reset-prompt   # обновить время справа: остаётся время запуска команды, а не появления промпта
   zle .accept-line
 }
 zle -N accept-line _layout_accept_line
 
-# --- prompt: user@host dir (branch) $
+# --- prompt: локально `> dir (branch) $`, по ssh `user@host dir (branch) $`
 autoload -Uz vcs_info
 zstyle ':vcs_info:git:*' formats ' (%b)'
 zstyle ':vcs_info:git:*' actionformats ' (%b|%a)'
 precmd_functions+=(vcs_info)
 setopt PROMPT_SUBST
-PROMPT='%n@%m %1~%F{green}${vcs_info_msg_0_}%f %(?..%F{red}[%?]%f )$ '
+if [[ -n $SSH_CONNECTION ]]; then _prompt_who='%n@%m '; else _prompt_who='> '; fi
+PROMPT="$_prompt_who"'%1~%F{green}${vcs_info_msg_0_}%f %(?..%F{red}[%?]%f )$ '
+RPROMPT='%F{8}%*%f'   # время справа, серым
 
 # --- completion: регистронезависимая
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -104,6 +107,9 @@ alias gpush='git push -u origin HEAD'
 alias gpull='git pull --rebase --autostash'
 alias g_uncommit='git reset --soft HEAD~1'
 alias g_reset_orig='git fetch && git reset --hard @{u}'
+
+# diff рабочей копии с upstream: незапушенные коммиты + незакоммиченные правки
+gdiff() { git diff @{u} "$@" }
 
 # что уйдёт при push: коммиты и изменённые файлы относительно upstream
 g_what2push() {
