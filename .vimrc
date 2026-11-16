@@ -69,6 +69,9 @@ filetype plugin indent on
 com! FormatJSON %!python3 -m json.tool
 
 " --- plugins
+" coc только там, где он работает: Vim 9.0.0438+ / Neovim 0.8+ и есть node (на старых серверах без него)
+let s:use_coc = (has('nvim-0.8') || has('patch-9.0.0438')) && executable('node')
+
 call plug#begin('~/.vim/plugged')
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'jiangmiao/auto-pairs'
@@ -77,11 +80,10 @@ Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+if s:use_coc
+  Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+endif
 call plug#end()
-
-" coc-расширения ставятся автоматически (нужен node)
-let g:coc_global_extensions = ['coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier']
 
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = "rg --files --hidden --glob '!.git'"
@@ -100,6 +102,10 @@ inoremap <C-Left> <Esc>o
 vnoremap <C-y> "+y
 
 " --- coc (API coc#pum вместо pumvisible, актуальная версия coc)
+if s:use_coc
+" coc-расширения ставятся автоматически
+let g:coc_global_extensions = ['coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier']
+
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1] =~# '\s'
@@ -144,3 +150,4 @@ omap if <Plug>(coc-funcobj-i)
 omap af <Plug>(coc-funcobj-a)
 
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+endif
