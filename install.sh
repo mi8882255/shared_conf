@@ -24,6 +24,14 @@ add_line() {  # add_line <строка> <файл>
 }
 
 if [[ $OSTYPE == darwin* ]]; then
+  # на Apple Silicon родной Homebrew живёт в /opt/homebrew; /usr/local — Intel-сборка, ей нужна Rosetta
+  [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+  if [[ $(uname -m) == arm64 && ${commands[brew]:-} == /usr/local/* ]]; then
+    echo "!! ${commands[brew]} — Intel-версия Homebrew, на этом Mac (arm64) она не запустится."
+    echo '   Поставь родной Homebrew в /opt/homebrew: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    echo '   После установки открой новый терминал и запусти install.sh ещё раз.'
+    exit 1
+  fi
   if (( ! $+commands[brew] )); then
     echo '!! Нужен Homebrew: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
     echo '   После установки открой новый терминал и запусти install.sh ещё раз.'
